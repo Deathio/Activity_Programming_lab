@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <ctype.h>
+#include <math.h>
 // Custom Library
 #include "myLibrary.h"
 
@@ -107,7 +108,7 @@ void DigitValues(double * numberList)
 
     if(sizeOfTheArray > limitOfTheCondition)
     {
-        printf("Agora digite os valores reais que você deseja colocar em cada posição, porém lembre-se \nos números tem que estar entre -100 e 500 e que para colocar os decimais use a ,\n");
+        printf("Agora digite os valores reais que você deseja colocar em cada posição, porém lembre-se \nos números tem que estar entre -100 e 500, não podem ser multiplos de 8, diferentes de 0 e que para colocar os decimais use a ,\n");
         while(loopValue < sizeOfTheArray)
         {
             int isNum = 0;
@@ -117,14 +118,14 @@ void DigitValues(double * numberList)
             if(scanf(" %lf", &inputValue) == 1)
                 isNum = 1;
 
-            if(inputValue >= -100 && inputValue <= 500 && isNum)
+            if(inputValue >= -100 && inputValue <= 500 && isNum && fmod(inputValue, 8) != 0)
             {
                 numberList[loopValue] = inputValue;
                 loopValue++;
             }
             else
             {
-                printf("\a\nLembre-se dos tipos númericos e dos valores máximos e mínimos\n");
+                printf("\a\nLembre-se dos tipos númericos, diferentes de 0, diferentes dos multiplos de 8 e dos valores máximos e mínimos, \n");
             }
             fflush(stdin);
         }

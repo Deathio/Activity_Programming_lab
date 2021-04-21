@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "myLibrary.h"
 
 // Return Values

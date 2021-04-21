@@ -1,14 +1,15 @@
 # depslib dependency file v1.0
-1618766771 source:c:\users\lucas\onedrive\documentos\codeblocks projects\testproject1\main.c
+1618938253 source:c:\users\lucas\onedrive\documentos\codeblocks projects\testproject1\main.c
 	<stdio.h>
 	<stdlib.h>
 	<locale.h>
 	<ctype.h>
+	<math.h>
 	"myLibrary.h"
 
-1618766508 source:c:\users\lucas\onedrive\documentos\codeblocks projects\testproject1\mylibrary.c
+1618767549 source:c:\users\lucas\onedrive\documentos\codeblocks projects\testproject1\mylibrary.c
 	<stdio.h>
 	"myLibrary.h"
 
-1618765704 c:\users\lucas\onedrive\documentos\codeblocks projects\testproject1\mylibrary.h
+1618767549 c:\users\lucas\onedrive\documentos\codeblocks projects\testproject1\mylibrary.h
 
