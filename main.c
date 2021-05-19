@@ -1,55 +1,94 @@
+#include <ctype.h>
+#include <locale.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <locale.h>
-#include <ctype.h>
-#include <math.h>
+#include <string.h>
 // Custom Library
 #include "myLibrary.h"
 
-int sizeOfTheArray, limitOfTheCondition = 4, okay = 0;
+int sizeOfTheArray, limitOfTheCondition = 4, okayNumbers = 0, okayStrings = 0, maxSize = 55, sizeAlpha = 26, isEncrpyted = 0;
 double average;
+char encryptChars[26] = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '!', '@', '#',
+                         '$', '%', ':', '&', '*', '(', ')', '-', '+', '<', '>', '/', ','
+                        };
+char AlphabetChar[26] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+                         'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'Y', 'Z',
+                        };
 
-void DefineLenght(double *);
+// number functions
+void DefineLenght(double **);
 void DigitValues(double *);
 void ReturnPosition(double *);
-void Error();
 void RunMultiplier(double *);
 void RunAverageWeighted(double *);
 void SeeThelist(double *);
+// string functions
+void DigitStrings(char **, int *);
+void SeeTheString(char *, int);
+void Encrypt(char **, int, int*);
+void Decrypt(char **, int, int*);
+
+void Error(int command);
 
 int main()
 {
-    double * numberList;
-    int command = 0;
+    char * stringRead;
+    double * numberList = 0;
+    int command = 0, strLenght = 0, multiplyEncript = 0;
 
     setlocale(LC_ALL, "Portuguese_Brazil.1252");
 
-    numberList = malloc(sizeof(double) * sizeOfTheArray);
+    stringRead = calloc(maxSize, sizeof(char));
+    numberList = calloc(sizeOfTheArray, sizeof(double));
 
     while(1)
     {
         command = 0;
-        printf("MENU: \n");
-        printf(" 1. Informar a quantidade de números a tratar \n 2. Digitar os números \n 3. Informar o menor número \n 4. Informar o maior número \n 5. Retornar o n-ésimo número da lista \n");
-        printf(" 6. Calcular a soma dos números \n 7. Calcular o produto dos números \n 8. Multiplicar todos os números por um valor \n 9. Calcular a média aritmética dos números \n");
-        printf(" 10. Informar quantos números estão acima da média aritmética \n 11. Calcular a média ponderada dos números \n 12. Ordenar os números em ordem crescente \n 13. Ordenar os números em ordem decrescente \n 14. Terminar a execução \n");
-        if(sizeOfTheArray > limitOfTheCondition && okay)
+        printf("%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s",
+               "MENU: \n",
+               "Números:\n",
+               " 1. Informar a quantidade de números a tratar\n",
+               " 2. Digitar os números\n",
+               " 3. Informar o menor número\n",
+               " 4. Informar o maior número\n",
+               " 5. Retornar o n-ésimo número da lista\n",
+               " 6. Calcular a soma dos números\n",
+               " 7. Calcular o produto dos números\n",
+               " 8. Multiplicar todos os números por um valor\n",
+               " 9. Calcular a média aritmética dos números\n",
+               " 10. Informar quantos números estão acima da média aritmética\n",
+               " 11. Calcular a média ponderada dos números\n",
+               " 12. Ordenar os números em ordem crescente\n",
+               " 13. Ordenar os números em ordem decrescente\n",
+               "Strings:\n",
+               " 14. Ler string\n",
+               " 15. Mostrar string lida e o seu tamanho\n",
+               " 16. Criptografar a string\n",
+               " 17. Descriptografar a string\n",
+               " 18. Terminar a execução\n");
+        if(sizeOfTheArray > limitOfTheCondition && okayNumbers)
             SeeThelist(numberList);
         printf("Comando: ");
-        scanf(" %d", &command);
+        while(!scanf(" %d", &command))
+        {
+            printf("\n Lembre-se de que os comandos só estão em números inteiros\n\a");
+            fflush(stdin);
+            printf("\nComando: ");
+        }
         printf("\n");
 
         if(command == 1)
-            DefineLenght(numberList);
+            DefineLenght(&numberList);
         else if(command == 2)
             DigitValues(numberList);
 
-        else if(sizeOfTheArray > limitOfTheCondition && okay && command < 14)
+        else if(sizeOfTheArray > limitOfTheCondition && okayNumbers && command < 14)
         {
             if(command == 3)
-                printf("O menor número da lista é o valor: %.1f\n\n", ShortestNumber(numberList, sizeOfTheArray));
+                printf("O menor número da lista é o valor: %.1f\n\n", ExtremeValue(numberList, sizeOfTheArray, -1));
             else if(command == 4)
-                printf("O maior número da lista é o valor: %.1f\n\n", LargestNumber(numberList, sizeOfTheArray));
+                printf("O maior número da lista é o valor: %.1f\n\n", ExtremeValue(numberList, sizeOfTheArray, 1));
             else if(command == 5)
                 ReturnPosition(numberList);
             else if(command == 6)
@@ -65,26 +104,30 @@ int main()
             else if(command == 11)
                 RunAverageWeighted(numberList);
             else if(command == 12)
-                SortGrowingList(numberList, sizeOfTheArray);
+                SortList(numberList, sizeOfTheArray, 1);
             else if(command == 13)
-                SortDescendingList(numberList, sizeOfTheArray);
+                SortList(numberList, sizeOfTheArray, -1);
         }
         else if(command == 14)
+            DigitStrings(&stringRead, &strLenght);
+        else if(okayStrings)
+        {
+            if(command == 15)
+                SeeTheString(stringRead, strLenght);
+            else if(command == 16)
+                Encrypt(&stringRead, strLenght, &multiplyEncript);
+            else if(command == 17 && isEncrpyted)
+                Decrypt(&stringRead, strLenght, &multiplyEncript);
+            else
+                printf("Não pode decriptar um código que não foi encriptado\n\n");
+        }
+        else if(command == 18)
             return 0;
         else
-            Error();
+            Error(command);
     }
 }
-void Error()
-{
-    if(sizeOfTheArray > limitOfTheCondition && okay == 0)
-        printf("Digite os valores da nova lista criada\n\n\a");
-    else if((sizeOfTheArray < limitOfTheCondition && okay == 0) || (sizeOfTheArray < limitOfTheCondition && okay == 1))
-        printf("Digite o tamanho da nova lista\n\n\a");
-    else
-        printf("O comando digitado é inválido\n\n\a");
-}
-void DefineLenght(double * numberList)
+void DefineLenght(double ** numberList)
 {
     sizeOfTheArray = 0;
 
@@ -99,12 +142,12 @@ void DefineLenght(double * numberList)
         fflush(stdin);
     }
 
-    numberList = malloc(sizeof(double) * sizeOfTheArray);
-    okay = 0;
+    *numberList = realloc(*numberList, sizeof(double) * sizeOfTheArray);
+    okayNumbers = 0;
 }
 void DigitValues(double * numberList)
 {
-    int loopValue;
+    int loopValue = 0;
 
     if(sizeOfTheArray > limitOfTheCondition)
     {
@@ -113,9 +156,9 @@ void DigitValues(double * numberList)
         {
             int isNum = 0;
             double inputValue = 0;
-            printf("Digite o valor da posição %d da lista: ", loopValue);
+            printf("Digite o valor da posição %d da lista: ", loopValue + 1);
 
-            if(scanf(" %lf", &inputValue) == 1)
+            if(scanf(" %lf", &inputValue))
                 isNum = 1;
 
             if(inputValue >= -100 && inputValue <= 500 && isNum && fmod(inputValue, 8) != 0)
@@ -125,38 +168,39 @@ void DigitValues(double * numberList)
             }
             else
             {
-                printf("\a\nLembre-se dos tipos númericos, diferentes de 0, diferentes dos multiplos de 8 e dos valores máximos e mínimos, \n");
+                printf("\a\nLembre-se dos tipos númericos, diferentes de 0, diferentes dos multiplos de 8 e estando eles dentro do conjunto\n");
             }
             fflush(stdin);
         }
-        okay = 1;
+        okayNumbers = 1;
         average = ListAverage(numberList, sizeOfTheArray);
         printf("\n");
     }
     else
     {
-        Error();
+        Error(2);
     }
 }
 void ReturnPosition(double * numberList)
 {
     int position = -1, isNum = 0;
 
-    while(position < 0 || position > sizeOfTheArray - 1 || isNum == 0)
+    while(position <= 0 || position > sizeOfTheArray || !isNum)
     {
         isNum = 0;
-        printf("Diga a posição do número que deseja retornar (ele tem que estar entre 0 e %d)\n", sizeOfTheArray - 1);
+        printf("Diga a posição do número que deseja retornar (ele tem que estar entre 1 e %d)\n", sizeOfTheArray);
 
         printf("Posição: ");
 
-        if(scanf(" %d", &position) == 1)
+        if(scanf(" %d", &position))
             isNum = 1;
         else
-            printf("\a\nLembrando somente tipos númericos!\n");
+            printf("\a\nLembrando somente tipos inteiros dentro do conjunto demonstrado!\n");
 
         printf("\n");
+        fflush(stdin);
     }
-    double value = numberList[position];
+    double value = numberList[position - 1];
     printf("O número nessa posição é o %.1f\n\n", value);
 
 }
@@ -165,19 +209,21 @@ void RunMultiplier(double * numberList)
     double value = 0;
     int isNum = 0;
 
-    while(value == 0 && isNum == 0)
-    {
+    do{
         isNum = 0;
-        printf("Digite o número que vai ser multiplicado pela lista de valores (Lembre-se ele tem de ser diferente de 0)\n");
-        printf("Número: ");
+        printf("%s%s",
+               "Digite o número que vai ser multiplicado pela lista de valores (Lembre-se ele tem de ser diferente de 0)\n",
+               "Número: ");
 
-        if(scanf(" %lf", &value) == 1)
+        if(scanf(" %lf", &value))
             isNum = 1;
         else
             printf("\a\nLembrando somente tipos númericos!\n");
 
         printf("\n");
-    }
+        fflush(stdin);
+
+    }while(!value || !isNum);
 
     MultiplyTheList(numberList, value, sizeOfTheArray);
     average = ListAverage(numberList, sizeOfTheArray);
@@ -189,19 +235,21 @@ void RunAverageWeighted(double * numberList)
 
     weightList = malloc(sizeof(double) * sizeOfTheArray);
 
-    printf("Para saber a média ponderada precisamos dos pesos de cada valor\n");
+    printf("Para saber a média ponderada precisamos dos pesos de cada valor(Somente tipos numéricos diferentes de 0)\n");
 
     while(loopValue < sizeOfTheArray || isNum == 0)
     {
 
         printf("Digite o peso da posição %d da lista: ", loopValue);
 
-        if(scanf(" %lf", &weightList[loopValue]) == 1)
+        if(scanf(" %lf", &weightList[loopValue]) && weightList[loopValue] != 0)
+        {
             isNum = 1;
+            loopValue++;
+        }
         else
-            printf("\a\nLembrando somente tipos númericos!\n");
+            printf("\a\nLembrando somente tipos númericos e sendo eles diferentes de 0!\n");
 
-        loopValue++;
         fflush(stdin);
     }
 
@@ -210,7 +258,7 @@ void RunAverageWeighted(double * numberList)
 void SeeThelist(double * list_of_values)
 {
     int loopValue, lineLenght;
-    lineLenght = 30 + (sizeOfTheArray - 5) * 4;
+    lineLenght = 30 + (sizeOfTheArray - 5) * 5;
     for(loopValue = 0; loopValue < lineLenght; loopValue++)
         printf("-");
     printf("\n");
@@ -221,4 +269,106 @@ void SeeThelist(double * list_of_values)
     for(loopValue = 0; loopValue < lineLenght; loopValue++)
         printf("-");
     printf("\n");
+}
+void Error(int command)
+{
+    if(command < 14)
+    {
+        if(sizeOfTheArray > limitOfTheCondition && !okayNumbers)
+            printf("Digite os valores da nova lista criada\n\a");
+        else if((sizeOfTheArray < limitOfTheCondition && !okayNumbers) || (sizeOfTheArray < limitOfTheCondition && okayNumbers))
+            printf("Digite o tamanho da nova lista\n\a");
+    }
+    else if(command > 13 && command < 18 && !okayStrings)
+        printf("Digite a frase/palavra primeiro antes de executar os demais comandos\n\a");
+    else
+        printf("O comando digitado é inválido\n\a");
+
+
+
+    printf("\n");
+}
+void DigitStrings(char ** stringIn, int * newLen)
+{
+    if(okayStrings == 1)
+        *stringIn = (char *) realloc(*stringIn, maxSize * sizeof(char));
+
+    printf("Digite a frase / palavra para o programa: ");
+
+    okayStrings = 1;
+
+    do
+    {
+        fflush(stdin);
+        fgets(*stringIn, maxSize, stdin);
+        *newLen = strlen(*stringIn) - 1;
+
+    }
+    while(*newLen > 50 || *stringIn[0] == '\n' || AlphaSpaceCheck(*stringIn, *newLen));
+
+    while((*stringIn)[*newLen - 1] == ' ') *newLen -= 1;
+    (*stringIn)[*newLen] = '\0';
+
+    *stringIn = (char *) realloc(*stringIn, *newLen * sizeof(char));
+    printf("\n");
+}
+void SeeTheString(char * stringIn, int strLenght)
+{
+    printf("Frase / Palavra : %s\n", stringIn);
+    printf("Número de letras: %d\n\n", strLenght);
+}
+void Encrypt(char ** stringIn, int strLenght, int * multiplyEncript)
+{
+    int stringCheck, encryptCheck, encryptedPosition = 0;
+
+    isEncrpyted = 1;
+
+    printf("Digite um numero para encripçao: ");
+    fflush(stdin);
+    while(!scanf("%d", &(*multiplyEncript)))
+    {
+        printf("Digite um número válido!\n");
+        printf("Digite um numero para encripção: ");
+        fflush(stdin);
+    }
+    printf("\n");
+    for(stringCheck = 0; stringCheck < strLenght; stringCheck++)
+    {
+        (*stringIn)[stringCheck] = toupper((*stringIn)[stringCheck]);
+
+        for(encryptCheck = 0; encryptCheck < sizeAlpha; encryptCheck++)
+        {
+            if((*stringIn)[stringCheck] == AlphabetChar[encryptCheck])
+            {
+                encryptedPosition = encryptCheck + (*multiplyEncript - 1);
+
+                while(encryptedPosition >= sizeAlpha) encryptedPosition -= sizeAlpha;
+
+                (*stringIn)[stringCheck] = encryptChars[encryptedPosition];
+                break;
+            }
+        }
+    }
+    printf("Frase/Palavra encriptada\n\n");
+}
+void Decrypt(char ** stringIn, int strLenght, int * multiplyEncript)
+{
+    int stringCheck, decryptCheck, encryptedPosition = 0;
+
+    for(stringCheck = 0; stringCheck < strLenght; stringCheck++)
+    {
+        for(decryptCheck = 0; decryptCheck < sizeAlpha; decryptCheck++)
+        {
+            if((*stringIn)[stringCheck] == encryptChars[decryptCheck])
+            {
+                encryptedPosition = decryptCheck - (*multiplyEncript - 1);
+
+                while(encryptedPosition < 0) encryptedPosition += sizeAlpha;
+
+                (*stringIn)[stringCheck] = AlphabetChar[encryptedPosition];
+                break;
+            }
+        }
+    }
+    printf("Frase/Palavra decriptada\n\n");
 }

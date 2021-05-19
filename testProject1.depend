@@ -13,3 +13,18 @@
 
 1618767549 c:\users\lucas\onedrive\documentos\codeblocks projects\testproject1\mylibrary.h
 
+1621430063 source:c:\users\lucas\onedrive\documentos\codeblocks projects\testproject1\activity_programming_lab\main.c
+	<ctype.h>
+	<locale.h>
+	<math.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"myLibrary.h"
+
+1621201661 c:\users\lucas\onedrive\documentos\codeblocks projects\testproject1\activity_programming_lab\mylibrary.h
+
+1621247727 source:c:\users\lucas\onedrive\documentos\codeblocks projects\testproject1\activity_programming_lab\mylibrary.c
+	"myLibrary.h"
+	<ctype.h>
+

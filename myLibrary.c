@@ -1,4 +1,5 @@
 #include "myLibrary.h"
+#include <ctype.h>
 
 // Return Values
 double ListAverage(double * list_of_values, int listRange)
@@ -54,30 +55,33 @@ double ListSum(double * list_of_values, int listRange)
 
     return sum;
 }
-double LargestNumber(double * list_of_values, int listRange)
+double ExtremeValue(double * list_of_values, int listRange, int typeOfTheValue)
 {
     int loopValue;
     double num = list_of_values[0];
 
     for(loopValue = 1; loopValue < listRange; loopValue++)
-        if(list_of_values[loopValue] > num)
+    {
+        if(list_of_values[loopValue] > num && typeOfTheValue == 1)
             num = list_of_values[loopValue];
 
-    return num;
-}
-double ShortestNumber(double * list_of_values, int listRange)
-{
-    int loopValue;
-    double num = list_of_values[0];
-
-    for(loopValue = 1; loopValue < listRange; loopValue++)
-        if(list_of_values[loopValue] < num)
+        else if(list_of_values[loopValue] < num && typeOfTheValue == -1)
             num = list_of_values[loopValue];
-
+    }
     return num;
 }
 
 // Modify The list
+int AlphaSpaceCheck(char * stringIn, int lenString)
+{
+    int loopValue;
+    for(loopValue = 0; loopValue < lenString; loopValue++)
+    {
+        if(!isalpha(stringIn[loopValue]) && stringIn[loopValue] != ' ')
+            return 1;
+    }
+    return 0;
+}
 void MultiplyTheList(double * list_of_values, double value_for_multiply, int listRange)
 {
     int loopValue;
@@ -85,7 +89,7 @@ void MultiplyTheList(double * list_of_values, double value_for_multiply, int lis
     for(loopValue = 0; loopValue < listRange; loopValue++)
         list_of_values[loopValue] *= value_for_multiply;
 }
-void SortGrowingList(double * list_of_values, int listRange)
+void SortList(double * list_of_values, int listRange, int typeOfTheValue)
 {
     int loopValue, loopValue1;
     double temp;
@@ -93,23 +97,13 @@ void SortGrowingList(double * list_of_values, int listRange)
     for(loopValue = 1; loopValue < listRange; loopValue++)
         for(loopValue1 = loopValue; loopValue1 > 0; loopValue1--)
         {
-            if(list_of_values[loopValue1] < list_of_values[loopValue1 - 1])
+            if(list_of_values[loopValue1] < list_of_values[loopValue1 - 1] && typeOfTheValue == 1)
             {
                 temp = list_of_values[loopValue1];
                 list_of_values[loopValue1] = list_of_values[loopValue1 - 1];
                 list_of_values[loopValue1 - 1] = temp;
             }
-        }
-}
-void SortDescendingList(double * list_of_values, int listRange)
-{
-    int loopValue, loopValue1;
-    double temp;
-
-    for(loopValue = 1; loopValue < listRange; loopValue++)
-        for(loopValue1 = loopValue; loopValue1 > 0; loopValue1--)
-        {
-            if(list_of_values[loopValue1] > list_of_values[loopValue1 - 1])
+            else if(list_of_values[loopValue1] > list_of_values[loopValue1 - 1] && typeOfTheValue == -1)
             {
                 temp = list_of_values[loopValue1];
                 list_of_values[loopValue1] = list_of_values[loopValue1 - 1];
